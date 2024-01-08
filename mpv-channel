@@ -31,13 +31,13 @@ fi
 COMMANDS=()
 
 OPTION_NUMBER=1
-LAST_OPTION=$OPTION_NUMBER
+LAST_CHANNEL=$OPTION_NUMBER
 while IFS='=' read -r NAME COMMAND
 do
     echo "$OPTION_NUMBER.) $NAME"
     COMMANDS+=("$COMMAND")
     ((OPTION_NUMBER+=1))
-    LAST_OPTION=$OPTION_NUMBER
+    LAST_CHANNEL=$OPTION_NUMBER
 done < $CHANNEL_LIST_PATH
 
 ADD_CHANNEL_OPTION=$OPTION_NUMBER
@@ -54,12 +54,12 @@ if (( USER_INPUT == ADD_CHANNEL_OPTION ))
 then
     echo "Creating new channel entry..."
     echo -n "Enter an alias for the channel: "
-    read user_channel_alias
+    read USER_CHANNEL_ALIAS
     echo -n "Enter a channel number: "
-    read user_channel_num
+    read USER_CHANNEL_NUM
 
     # Store the entry in the config file.
-    echo "${user_channel_alias}=mpv http://${HDHOMERUN_IP}:5004/auto/v${user_channel_num} -fs --deinterlace" >> ${CHANNEL_LIST_PATH}
+    echo "${USER_CHANNEL_ALIAS}=mpv http://${HDHOMERUN_IP}:5004/auto/v${USER_CHANNEL_NUM} -fs --deinterlace" >> ${CHANNEL_LIST_PATH}
 
     # Sort the file alphabetically now that there's a new entry.
     sort -o ${CHANNEL_LIST_PATH} ${CHANNEL_LIST_PATH}
@@ -72,7 +72,7 @@ then
     else
         echo "Aborting..."
     fi
-elif (( USER_INPUT < LAST_OPTION ))
+elif (( USER_INPUT < LAST_CHANNEL ))
 then
     echo "Opening channel..."
     ${COMMANDS[$USER_INPUT - 1]}
