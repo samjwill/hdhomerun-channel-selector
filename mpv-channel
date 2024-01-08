@@ -1,12 +1,12 @@
 #!/bin/bash
 
-while true; do
-    # Ensure mpv is installed
-    if ! command -v mpv > /dev/null 2>&1; then
-        echo "mpv is not installed! Please install it to use this tool."
-        exit 1
-    fi
+# Ensure mpv is installed
+if ! command -v mpv > /dev/null 2>&1; then
+    echo "mpv is not installed! Please install it to use this tool."
+    exit 1
+fi
 
+while true; do
     # Determine XDG-compliant config path
     if [ -z "$XDG_CONFIG_HOME" ]; then
         XDG_CONFIG_HOME="$HOME/.config"
