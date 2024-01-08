@@ -10,6 +10,7 @@ MPV_CHANNEL_SELECTOR_CONFIG_DIR="$XDG_CONFIG_HOME/mpv-channel-selector"
 if [ ! -d "$DIRECTORY" ]; then
     mkdir -p "$MPV_CHANNEL_SELECTOR_CONFIG_DIR"
 fi
+echo "Using config located at ${MPV_CHANNEL_SELECTOR_CONFIG_DIR}"
 
 # Ensure HDHomeRune IP address file exists in config directory
 HDHOMERUN_IP_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/hdhomerun-ip"
