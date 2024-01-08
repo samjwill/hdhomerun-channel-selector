@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Ensure mpv is installed
+if ! command -v mpv > /dev/null 2>&1; then
+    echo "mpv is not installed! Please install it to use this tool."
+    exit 1
+fi
+
 # Determine XDG-compliant config path
 if [ -z "$XDG_CONFIG_HOME" ]; then
     XDG_CONFIG_HOME="$HOME/.config"
@@ -33,24 +39,40 @@ if [ ! -f "$CHANNEL_LIST_PATH" ]; then
     touch "$CHANNEL_LIST_PATH"
 fi
 
+# Define an array to store the alias of each channel.
+CHANNEL_NAMES=()
+
 # Define an array to store the command associated with opening each channel.
 COMMANDS=()
 
 # Display all channel names. Save the command associated with each channel in
 # the commands array.
+echo ""
+echo "Channel list:"
 OPTION_NUMBER=1
 LAST_CHANNEL_OPTION=$OPTION_NUMBER
 while IFS='=' read -r CHANNEL_NAME COMMAND
 do
     echo "$OPTION_NUMBER.) $CHANNEL_NAME"
     COMMANDS+=("$COMMAND")
+    CHANNEL_NAMES+=("$CHANNEL_NAME")
     ((OPTION_NUMBER+=1))
+
+    # Ensure that the last channel option is logged so that we know whether
+    # user selection is invalid.
     LAST_CHANNEL_OPTION=$OPTION_NUMBER
 done < $CHANNEL_LIST_PATH
 
+echo ""
+echo "Additional options:"
 # Add custom option to add a new channel.
 ADD_CHANNEL_OPTION=$OPTION_NUMBER
 echo "$ADD_CHANNEL_OPTION.) Add new channel"
+((OPTION_NUMBER+=1))
+
+# Add custom option to reset the config files.
+REMOVE_CHANNEL_OPTION=$OPTION_NUMBER
+echo "$REMOVE_CHANNEL_OPTION.) Remove channel"
 ((OPTION_NUMBER+=1))
 
 # Add custom option to reset the config files.
@@ -58,6 +80,7 @@ RESET_CONFIGS_OPTION=$OPTION_NUMBER
 echo "$RESET_CONFIGS_OPTION.) Reset configs"
 
 # Get user selection
+echo ""
 read -p "Select a channel or option: " USER_INPUT
 
 # Handle user selection
@@ -79,7 +102,13 @@ elif (( USER_INPUT == RESET_CONFIGS_OPTION )); then
     else
         echo "Aborting..."
     fi
-elif (( USER_INPUT < LAST_CHANNEL_OPTION )); then
+elif (( USER_INPUT == REMOVE_CHANNEL_OPTION )); then
+    ${CHANNEL_NAMES[$USER_INPUT - 1]}
+    echo "Enter the number of the channel that you would like to remove."
+    read -p "Alternatively, press Ctrl-c to abort: " CHANNEL_TO_REMOVE
+    sed -i "/^${CHANNEL_NAMES[$CHANNEL_TO_REMOVE - 1]}=/d" ${CHANNEL_LIST_PATH}
+    echo "Channel removed!"
+elif (( USER_INPUT < LAST_CHANNEL_OPTION && USER_INPUT >= 0 )); then
     echo "Opening channel..."
     ${COMMANDS[$USER_INPUT - 1]}
 else
