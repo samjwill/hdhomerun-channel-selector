@@ -67,22 +67,19 @@ while true; do
     echo ""
     echo "Additional options:"
     # Add custom option to add a new channel.
-    ADD_CHANNEL_OPTION=$OPTION_NUMBER
+    ADD_CHANNEL_OPTION="a"
     echo "$ADD_CHANNEL_OPTION.) Add new channel"
-    ((OPTION_NUMBER+=1))
 
     # Add custom option to reset the config files.
-    REMOVE_CHANNEL_OPTION=$OPTION_NUMBER
+    REMOVE_CHANNEL_OPTION="b"
     echo "$REMOVE_CHANNEL_OPTION.) Remove channel"
-    ((OPTION_NUMBER+=1))
 
     # Add custom option to reset the config files.
-    RESET_HDHOMERUN_IP_OPTION=$OPTION_NUMBER
+    RESET_HDHOMERUN_IP_OPTION="c"
     echo "$RESET_HDHOMERUN_IP_OPTION.) Reset HDHomeRun IP"
-    ((OPTION_NUMBER+=1))
 
     # Add custom option to reset the config files.
-    REMOVE_CONFIGS_OPTION=$OPTION_NUMBER
+    REMOVE_CONFIGS_OPTION="d"
     echo "$REMOVE_CONFIGS_OPTION.) Remove ALL configs"
 
     # Get user selection
@@ -91,7 +88,7 @@ while true; do
     read -p "or press Ctrl-c to abort: " USER_INPUT
 
     # Handle user selection
-    if (( USER_INPUT == ADD_CHANNEL_OPTION )); then
+    if [[ "$USER_INPUT" == "$ADD_CHANNEL_OPTION" ]]; then
         echo "Creating new channel entry..."
         read -p "Enter an alias for the channel: " USER_CHANNEL_ALIAS
         read -p "Enter a channel number: " USER_CHANNEL_NUM
@@ -101,25 +98,24 @@ while true; do
 
         # Sort the file alphabetically now that there's a new entry.
         sort -o ${CHANNEL_LIST_PATH} ${CHANNEL_LIST_PATH}
-    elif (( USER_INPUT == REMOVE_CONFIGS_OPTION )); then
+    elif [[ "$USER_INPUT" == "$REMOVE_CONFIGS_OPTION" ]]; then
         echo "You are about to remove $MPV_CHANNEL_SELECTOR_CONFIG_DIR"
         read -p "Do you want to proceed? (y/n): " RESPONSE
         if [[ "$RESPONSE" == "y" ]]; then
             rm -r $MPV_CHANNEL_SELECTOR_CONFIG_DIR
             echo "All configs have been removed!"
 
-            # Break here instead of continuing because we want all environment variables to reset too.
+            # Break here instead of continuing because we want all variables to reset too.
             break
         else
             echo "Aborting..."
         fi
-    elif (( USER_INPUT == REMOVE_CHANNEL_OPTION )); then
-        ${CHANNEL_NAMES[$USER_INPUT - 1]}
+    elif [[ "$USER_INPUT" == "$REMOVE_CHANNEL_OPTION" ]]; then
         echo "Enter the number of the channel that you would like to remove"
         read -p "or press Ctrl-c to abort: " CHANNEL_TO_REMOVE
         sed -i "/^${CHANNEL_NAMES[$CHANNEL_TO_REMOVE - 1]}=/d" ${CHANNEL_LIST_PATH}
         echo "Channel removed!"
-    elif (( USER_INPUT == RESET_HDHOMERUN_IP_OPTION )); then
+    elif [[ "$USER_INPUT" == "$RESET_HDHOMERUN_IP_OPTION" ]]; then
         read -p "Enter the IP address of the HDHomeRun: " HDHOMERUN_IP
         echo "${HDHOMERUN_IP}" > $HDHOMERUN_IP_PATH
     elif (( USER_INPUT < LAST_CHANNEL_OPTION && USER_INPUT >= 0 )); then
