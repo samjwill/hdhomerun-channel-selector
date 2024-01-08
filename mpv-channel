@@ -44,7 +44,7 @@ while true; do
     CHANNEL_NAMES=()
 
     # Define an array to store the command associated with opening each channel.
-    COMMANDS=()
+    CHANNEL_NUMBERS=()
 
     # Display all channel names. Save the command associated with each channel in
     # the commands array.
@@ -55,7 +55,7 @@ while true; do
     while IFS='=' read -r CHANNEL_NAME COMMAND
     do
         echo "$OPTION_NUMBER.) $CHANNEL_NAME"
-        COMMANDS+=("$COMMAND")
+        CHANNEL_NUMBERS+=("$COMMAND")
         CHANNEL_NAMES+=("$CHANNEL_NAME")
         ((OPTION_NUMBER+=1))
 
@@ -89,12 +89,11 @@ while true; do
 
     # Handle user selection
     if [[ "$USER_INPUT" == "$ADD_CHANNEL_OPTION" ]]; then
-        echo "Creating new channel entry..."
         read -p "Enter an alias for the channel: " USER_CHANNEL_ALIAS
         read -p "Enter a channel number: " USER_CHANNEL_NUM
 
         # Store the entry in the config file.
-        echo "${USER_CHANNEL_ALIAS}=mpv http://${HDHOMERUN_IP}:${HDHOMERUN_PORT}/auto/v${USER_CHANNEL_NUM} -fs --deinterlace" >> ${CHANNEL_LIST_PATH}
+        echo "${USER_CHANNEL_ALIAS}=${USER_CHANNEL_NUM}" >> ${CHANNEL_LIST_PATH}
 
         # Sort the file alphabetically now that there's a new entry.
         sort -o ${CHANNEL_LIST_PATH} ${CHANNEL_LIST_PATH}
@@ -120,7 +119,7 @@ while true; do
         echo "${HDHOMERUN_IP}" > $HDHOMERUN_IP_PATH
     elif (( USER_INPUT < LAST_CHANNEL_OPTION && USER_INPUT >= 0 )); then
         echo "Opening channel..."
-        ${COMMANDS[$USER_INPUT - 1]}
+        mpv http://${HDHOMERUN_IP}:${HDHOMERUN_PORT}/auto/v${CHANNEL_NUMBERS[$USER_INPUT - 1]} -fs --deinterlace
         break
     else
         echo "Invalid selection!"
