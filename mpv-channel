@@ -61,8 +61,8 @@ then
 elif (( USER_INPUT == RESET_CONFIGS_OPTION ))
 then
     echo "You are about to remove $MPV_CHANNEL_SELECTOR_CONFIG_DIR."
-    read -p "Do you want to proceed? (y/n): " response
-    if [[ "$response" == "y" ]]; then
+    read -p "Do you want to proceed? (y/n): " RESPONSE
+    if [[ "$RESPONSE" == "y" ]]; then
         rm -r $MPV_CHANNEL_SELECTOR_CONFIG_DIR
     else
         echo "Aborting..."
