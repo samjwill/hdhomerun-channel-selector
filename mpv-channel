@@ -1,26 +1,24 @@
 #!/bin/bash
 
-# Determine config path
+# Determine XDG-compliant config path
 if [ -z "$XDG_CONFIG_HOME" ]; then
     XDG_CONFIG_HOME="$HOME/.config"
 fi
 
+# Ensure config directory exists
 MPV_CHANNEL_SELECTOR_CONFIG_DIR="$XDG_CONFIG_HOME/mpv-channel-selector"
-if [ ! -d "$DIRECTORY" ]; then 
+if [ ! -d "$DIRECTORY" ]; then
     mkdir -p "$MPV_CHANNEL_SELECTOR_CONFIG_DIR"
 fi
 
-CHANNEL_LIST_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
-# Create config file if it doesn't exist
-if [ ! -f "$CHANNEL_LIST_PATH" ]; then
-    touch "$CHANNEL_LIST_PATH"
-fi
-
+# Ensure HDHomeRune IP address file exists in config directory
 HDHOMERUN_IP_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/hdhomerun-ip"
 if [ -f "$HDHOMERUN_IP_PATH" ]; then
     read -r HDHOMERUN_IP < "$HDHOMERUN_IP_PATH"
 fi
 
+# If there is no HDHomeRun IP address file, prompt the user for the IP and save
+# it into said file.
 if [ -z "${HDHOMERUN_IP}" ]; then
     echo -n "Enter the IP address of the HDHomeRun: "
     read HDHOMERUN_IP
@@ -29,31 +27,41 @@ fi
 HDHOMERUN_PORT="5004"
 echo "Using HDHomeRun IP/Port: ${HDHOMERUN_IP}:${HDHOMERUN_PORT}"
 
-# Define an array to store the COMMANDS
+# Ensure channel list file exists in config directory
+CHANNEL_LIST_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
+if [ ! -f "$CHANNEL_LIST_PATH" ]; then
+    touch "$CHANNEL_LIST_PATH"
+fi
+
+# Define an array to store the command associated with opening each channel.
 COMMANDS=()
 
+# Display all channel names. Save the command associated with each channel in
+# the commands array.
 OPTION_NUMBER=1
 LAST_CHANNEL_OPTION=$OPTION_NUMBER
-while IFS='=' read -r NAME COMMAND
+while IFS='=' read -r CHANNEL_NAME COMMAND
 do
-    echo "$OPTION_NUMBER.) $NAME"
+    echo "$OPTION_NUMBER.) $CHANNEL_NAME"
     COMMANDS+=("$COMMAND")
     ((OPTION_NUMBER+=1))
     LAST_CHANNEL_OPTION=$OPTION_NUMBER
 done < $CHANNEL_LIST_PATH
 
+# Add custom option to add a new channel.
 ADD_CHANNEL_OPTION=$OPTION_NUMBER
 echo "$ADD_CHANNEL_OPTION.) Add new channel"
 ((OPTION_NUMBER+=1))
 
+# Add custom option to reset the config files.
 RESET_CONFIGS_OPTION=$OPTION_NUMBER
 echo "$RESET_CONFIGS_OPTION.) Reset configs"
 
+# Get user selection
 read -p "Select a channel or option: " USER_INPUT
 
 # Handle user selection
-if (( USER_INPUT == ADD_CHANNEL_OPTION ))
-then
+if (( USER_INPUT == ADD_CHANNEL_OPTION )); then
     echo "Creating new channel entry..."
     echo -n "Enter an alias for the channel: "
     read USER_CHANNEL_ALIAS
@@ -65,8 +73,7 @@ then
 
     # Sort the file alphabetically now that there's a new entry.
     sort -o ${CHANNEL_LIST_PATH} ${CHANNEL_LIST_PATH}
-elif (( USER_INPUT == RESET_CONFIGS_OPTION ))
-then
+elif (( USER_INPUT == RESET_CONFIGS_OPTION )); then
     echo "You are about to remove $MPV_CHANNEL_SELECTOR_CONFIG_DIR."
     read -p "Do you want to proceed? (y/n): " RESPONSE
     if [[ "$RESPONSE" == "y" ]]; then
@@ -74,11 +81,9 @@ then
     else
         echo "Aborting..."
     fi
-elif (( USER_INPUT < LAST_CHANNEL_OPTION ))
-then
+elif (( USER_INPUT < LAST_CHANNEL_OPTION )); then
     echo "Opening channel..."
     ${COMMANDS[$USER_INPUT - 1]}
 else
     echo "Invalid selection!"
 fi
-
