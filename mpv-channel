@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Determine config path
+if [ -z "$XDG_CONFIG_HOME" ]; then
+    XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+MPV_CHANNEL_SELECTOR_CONFIG_DIR=$XDG_CONFIG_HOME/mpv-channel-selector
+if [ ! -d "$DIRECTORY" ]; then 
+    mkdir -p "$MPV_CHANNEL_SELECTOR_CONFIG_DIR"
+fi
+
+CHANNEL_LIST_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
+
+# Create config file if it doesn't exist
+if [ ! -f "$CHANNEL_LIST_PATH" ]; then
+    touch "$CHANNEL_LIST_PATH"
+fi
+
+HDHOMERUN_IP_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/hdhomerun-ip"
+if [ -f "$HDHOMERUN_IP_PATH" ]; then
+    read -r HDHOMERUN_IP < "$HDHOMERUN_IP_PATH"
+fi
+
+if [ -z "${HDHOMERUN_IP}" ]; then
+    echo -n "Enter the IP address of the HDHomeRun: "
+    read HDHOMERUN_IP
+    echo "${HDHOMERUN_IP}" >> $HDHOMERUN_IP_PATH
+fi
+
+# Define an array to store the COMMANDS
+COMMANDS=()
+
+option_number=1
+last_option=$option_number
+while IFS='=' read -r NAME COMMAND
+do
+    echo "$option_number.) $NAME"
+    COMMANDS+=("$COMMAND")
+    ((option_number+=1))
+    last_option=$option_number
+done < $CHANNEL_LIST_PATH
+
+add_channel_option=$option_number
+echo "$add_channel_option.) Add new channel"
+((option_number+=1))
+
+reset_configs_option=$option_number
+echo "$reset_configs_option.) Reset configs"
+
+read -p "Select a channel or option: " USER_INPUT
+
+# Handle user selection
+if (( USER_INPUT == add_channel_option ))
+then
+    echo "Creating new channel entry..."
+    echo -n "Enter an alias for the channel: "
+    read user_channel_alias
+    echo -n "Enter a channel number: "
+    read user_channel_num
+    echo "${user_channel_alias}=mpv http://${HDHOMERUN_IP}:5004/auto/v${user_channel_num} -fs --deinterlace">> $CHANNEL_LIST_PATH
+elif (( USER_INPUT == reset_configs_option ))
+then
+    echo "You are about to remove $MPV_CHANNEL_SELECTOR_CONFIG_DIR."
+    read -p "Do you want to proceed? (y/n): " response
+    if [[ "$response" == "y" ]]; then
+        rm -r $MPV_CHANNEL_SELECTOR_CONFIG_DIR
+    else
+        echo "Aborting..."
+    fi
+elif (( USER_INPUT < last_option ))
+then
+    echo "Opening channel..."
+    ${COMMANDS[$USER_INPUT - 1]}
+else
+    echo "Invalid selection!"
+fi
+
