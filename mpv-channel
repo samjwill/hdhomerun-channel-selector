@@ -26,6 +26,8 @@ if [ -z "${HDHOMERUN_IP}" ]; then
     read HDHOMERUN_IP
     echo "${HDHOMERUN_IP}" >> $HDHOMERUN_IP_PATH
 fi
+HDHOMERUN_PORT="5004"
+echo "Using HDHomeRun IP/Port: ${HDHOMERUN_IP}:${HDHOMERUN_PORT}"
 
 # Define an array to store the COMMANDS
 COMMANDS=()
@@ -59,7 +61,7 @@ then
     read USER_CHANNEL_NUM
 
     # Store the entry in the config file.
-    echo "${USER_CHANNEL_ALIAS}=mpv http://${HDHOMERUN_IP}:5004/auto/v${USER_CHANNEL_NUM} -fs --deinterlace" >> ${CHANNEL_LIST_PATH}
+    echo "${USER_CHANNEL_ALIAS}=mpv http://${HDHOMERUN_IP}:${HDHOMERUN_PORT}/auto/v${USER_CHANNEL_NUM} -fs --deinterlace" >> ${CHANNEL_LIST_PATH}
 
     # Sort the file alphabetically now that there's a new entry.
     sort -o ${CHANNEL_LIST_PATH} ${CHANNEL_LIST_PATH}
