@@ -57,7 +57,12 @@ then
     read user_channel_alias
     echo -n "Enter a channel number: "
     read user_channel_num
-    echo "${user_channel_alias}=mpv http://${HDHOMERUN_IP}:5004/auto/v${user_channel_num} -fs --deinterlace">> $CHANNEL_LIST_PATH
+
+    # Store the entry in the config file.
+    echo "${user_channel_alias}=mpv http://${HDHOMERUN_IP}:5004/auto/v${user_channel_num} -fs --deinterlace" >> ${CHANNEL_LIST_PATH}
+
+    # Sort the file alphabetically now that there's a new entry.
+    sort -o ${CHANNEL_LIST_PATH} ${CHANNEL_LIST_PATH}
 elif (( USER_INPUT == RESET_CONFIGS_OPTION ))
 then
     echo "You are about to remove $MPV_CHANNEL_SELECTOR_CONFIG_DIR."
