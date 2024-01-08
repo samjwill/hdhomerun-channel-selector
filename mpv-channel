@@ -5,13 +5,12 @@ if [ -z "$XDG_CONFIG_HOME" ]; then
     XDG_CONFIG_HOME="$HOME/.config"
 fi
 
-MPV_CHANNEL_SELECTOR_CONFIG_DIR=$XDG_CONFIG_HOME/mpv-channel-selector
+MPV_CHANNEL_SELECTOR_CONFIG_DIR="$XDG_CONFIG_HOME/mpv-channel-selector"
 if [ ! -d "$DIRECTORY" ]; then 
     mkdir -p "$MPV_CHANNEL_SELECTOR_CONFIG_DIR"
 fi
 
 CHANNEL_LIST_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
-
 # Create config file if it doesn't exist
 if [ ! -f "$CHANNEL_LIST_PATH" ]; then
     touch "$CHANNEL_LIST_PATH"
@@ -31,27 +30,27 @@ fi
 # Define an array to store the COMMANDS
 COMMANDS=()
 
-option_number=1
-last_option=$option_number
+OPTION_NUMBER=1
+LAST_OPTION=$OPTION_NUMBER
 while IFS='=' read -r NAME COMMAND
 do
-    echo "$option_number.) $NAME"
+    echo "$OPTION_NUMBER.) $NAME"
     COMMANDS+=("$COMMAND")
-    ((option_number+=1))
-    last_option=$option_number
+    ((OPTION_NUMBER+=1))
+    LAST_OPTION=$OPTION_NUMBER
 done < $CHANNEL_LIST_PATH
 
-add_channel_option=$option_number
-echo "$add_channel_option.) Add new channel"
-((option_number+=1))
+ADD_CHANNEL_OPTION=$OPTION_NUMBER
+echo "$ADD_CHANNEL_OPTION.) Add new channel"
+((OPTION_NUMBER+=1))
 
-reset_configs_option=$option_number
-echo "$reset_configs_option.) Reset configs"
+RESET_CONFIGS_OPTION=$OPTION_NUMBER
+echo "$RESET_CONFIGS_OPTION.) Reset configs"
 
 read -p "Select a channel or option: " USER_INPUT
 
 # Handle user selection
-if (( USER_INPUT == add_channel_option ))
+if (( USER_INPUT == ADD_CHANNEL_OPTION ))
 then
     echo "Creating new channel entry..."
     echo -n "Enter an alias for the channel: "
@@ -59,7 +58,7 @@ then
     echo -n "Enter a channel number: "
     read user_channel_num
     echo "${user_channel_alias}=mpv http://${HDHOMERUN_IP}:5004/auto/v${user_channel_num} -fs --deinterlace">> $CHANNEL_LIST_PATH
-elif (( USER_INPUT == reset_configs_option ))
+elif (( USER_INPUT == RESET_CONFIGS_OPTION ))
 then
     echo "You are about to remove $MPV_CHANNEL_SELECTOR_CONFIG_DIR."
     read -p "Do you want to proceed? (y/n): " response
@@ -68,7 +67,7 @@ then
     else
         echo "Aborting..."
     fi
-elif (( USER_INPUT < last_option ))
+elif (( USER_INPUT < LAST_OPTION ))
 then
     echo "Opening channel..."
     ${COMMANDS[$USER_INPUT - 1]}
