@@ -20,8 +20,7 @@ fi
 # If there is no HDHomeRun IP address file, prompt the user for the IP and save
 # it into said file.
 if [ -z "${HDHOMERUN_IP}" ]; then
-    echo -n "Enter the IP address of the HDHomeRun: "
-    read HDHOMERUN_IP
+    read -p "Enter the IP address of the HDHomeRun: " HDHOMERUN_IP
     echo "${HDHOMERUN_IP}" >> $HDHOMERUN_IP_PATH
 fi
 HDHOMERUN_PORT="5004"
@@ -63,10 +62,8 @@ read -p "Select a channel or option: " USER_INPUT
 # Handle user selection
 if (( USER_INPUT == ADD_CHANNEL_OPTION )); then
     echo "Creating new channel entry..."
-    echo -n "Enter an alias for the channel: "
-    read USER_CHANNEL_ALIAS
-    echo -n "Enter a channel number: "
-    read USER_CHANNEL_NUM
+    read -p "Enter an alias for the channel: " USER_CHANNEL_ALIAS
+    read -p "Enter a channel number: " USER_CHANNEL_NUM
 
     # Store the entry in the config file.
     echo "${USER_CHANNEL_ALIAS}=mpv http://${HDHOMERUN_IP}:${HDHOMERUN_PORT}/auto/v${USER_CHANNEL_NUM} -fs --deinterlace" >> ${CHANNEL_LIST_PATH}
