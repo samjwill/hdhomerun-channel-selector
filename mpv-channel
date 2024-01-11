@@ -46,8 +46,7 @@ while true; do
     # Define an array to store the command associated with opening each channel.
     CHANNEL_NUMBERS=()
 
-    # Display all channel names. Save the command associated with each channel in
-    # the commands array.
+    # Display all channel names.
     echo ""
     echo "Channel list:"
     OPTION_NUMBER=1
