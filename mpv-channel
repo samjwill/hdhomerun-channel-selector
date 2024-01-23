@@ -33,6 +33,12 @@ while true; do
     mkdir -p "$HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR"
     echo "Using config located at ${HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR}"
 
+    # Ensure channel list file exists in config directory
+    CHANNEL_LIST_PATH="$HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
+    if [ ! -f "$CHANNEL_LIST_PATH" ]; then
+        touch "$CHANNEL_LIST_PATH"
+    fi
+
     # Get HDHomeRun IP address from user. Store it in a file for future use.
     HDHOMERUN_IP_PATH="$HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR/hdhomerun-ip"
     if [ ! -f "$HDHOMERUN_IP_PATH" ]; then
@@ -58,12 +64,6 @@ while true; do
         exit
     else
         echo "Success!"
-    fi
-
-    # Ensure channel list file exists in config directory
-    CHANNEL_LIST_PATH="$HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
-    if [ ! -f "$CHANNEL_LIST_PATH" ]; then
-        touch "$CHANNEL_LIST_PATH"
     fi
 
     # Define an array to store the alias of each channel.
