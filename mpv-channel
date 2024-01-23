@@ -46,7 +46,9 @@ while true; do
     echo "Using HDHomeRun IP/Port: ${HDHOMERUN_IP}:${HDHOMERUN_PORT}"
 
     echo -n "Ensuring HDHomeRun is reachable... "
-    curl -sSf "$HDHOMERUN_IP/discover.json" > /dev/null
+    # Naive check, but not much on one's local network other than an HDHomeRun
+    # is going to have a "tuners.html" page that doesn't 404.
+    curl -sSf "$HDHOMERUN_IP/tuners.html" > /dev/null
     if [ $? -ne 0 ]; then
         read -p "Reset the IP? (y/n): " RESPONSE
         if [[ "$RESPONSE" == "y" ]]; then
