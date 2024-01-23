@@ -78,7 +78,7 @@ while true; do
     REMOVE_CHANNEL_OPTION="b"
     echo "$REMOVE_CHANNEL_OPTION.) Remove channel"
 
-    # Add custom option to reset the config files.
+    # Add custom option to remove a channel.
     RESET_HDHOMERUN_IP_OPTION="c"
     echo "$RESET_HDHOMERUN_IP_OPTION.) Reset HDHomeRun IP"
 
