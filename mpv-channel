@@ -23,18 +23,15 @@ while true; do
     fi
     echo "Using config located at ${MPV_CHANNEL_SELECTOR_CONFIG_DIR}"
 
-    # Ensure HDHomeRune IP address file exists in config directory
+    # Get HDHomeRune IP address from user. Store it in a file for future use.
     HDHOMERUN_IP_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/hdhomerun-ip"
-    if [ -f "$HDHOMERUN_IP_PATH" ]; then
-        read -r HDHOMERUN_IP < "$HDHOMERUN_IP_PATH"
+    if [ ! -f "$HDHOMERUN_IP_PATH" ]; then
+        read -p "Enter the IP address of the HDHomeRun: " USER_INPUT
+        echo "${USER_INPUT}" > ${HDHOMERUN_IP_PATH}
     fi
 
-    # If there is no HDHomeRun IP address file, prompt the user for the IP and save
-    # it into said file.
-    if [ -z "${HDHOMERUN_IP}" ]; then
-        read -p "Enter the IP address of the HDHomeRun: " HDHOMERUN_IP
-        echo "${HDHOMERUN_IP}" > $HDHOMERUN_IP_PATH
-    fi
+    # Read the IP from the file.
+    read -r HDHOMERUN_IP < "$HDHOMERUN_IP_PATH"
     HDHOMERUN_PORT="5004"
     echo "Using HDHomeRun IP/Port: ${HDHOMERUN_IP}:${HDHOMERUN_PORT}"
 
@@ -50,7 +47,7 @@ while true; do
     # Define an array to store the number of each aliased channel.
     CHANNEL_NUMBERS=()
 
-    # Display all channel names.
+    # Display all user-aliased channels.
     echo ""
     echo "Channel list:"
     OPTION_NUMBER=1
@@ -69,19 +66,19 @@ while true; do
 
     echo ""
     echo "Additional options:"
-    # Add custom option to add a new channel.
+    # Custom option to add a new channel.
     ADD_CHANNEL_OPTION="a"
     echo "$ADD_CHANNEL_OPTION.) Add new channel"
 
-    # Add custom option to reset the config files.
+    # Custom option to reset the config files.
     REMOVE_CHANNEL_OPTION="b"
     echo "$REMOVE_CHANNEL_OPTION.) Remove channel"
 
-    # Add custom option to remove a channel.
+    # Custom option to remove a channel.
     RESET_HDHOMERUN_IP_OPTION="c"
     echo "$RESET_HDHOMERUN_IP_OPTION.) Reset HDHomeRun IP"
 
-    # Add custom option to reset the config files.
+    # Custom option to reset the config files.
     REMOVE_CONFIGS_OPTION="d"
     echo "$REMOVE_CONFIGS_OPTION.) Remove ALL configs"
 
@@ -92,13 +89,16 @@ while true; do
 
     # Handle user selection
     if [[ "$USER_INPUT" == "$ADD_CHANNEL_OPTION" ]]; then
+        # A list of available channels can be curled from the HDHomeRun. You
+        # just need to parse the .json. It's sloppy, but I hacked this together
+        # and it works well enough. Didn't want this script to depend on jq.
         echo "Available channels are:"
         curl --silent http://${HDHOMERUN_IP}/lineup.json | grep -o '"GuideNumber":"[^"]*"' | cut -d ":" -f2 | sed 's/\"//g' | sed -z 's/\n/, /g' | sed 's/, $//'
         echo ""
         read -p "Enter a channel number: " USER_CHANNEL_NUM
         read -p "Enter an alias for the channel: " USER_CHANNEL_ALIAS
 
-        # Store the entry in the config file.
+        # Store the user's entry in the config file.
         echo "${USER_CHANNEL_ALIAS}=${USER_CHANNEL_NUM}" >> ${CHANNEL_LIST_PATH}
 
         # Sort the file alphabetically now that there's a new entry.
@@ -121,8 +121,7 @@ while true; do
         sed -i "/^${CHANNEL_NAMES[$CHANNEL_TO_REMOVE - 1]}=/d" ${CHANNEL_LIST_PATH}
         echo "Channel removed!"
     elif [[ "$USER_INPUT" == "$RESET_HDHOMERUN_IP_OPTION" ]]; then
-        read -p "Enter the IP address of the HDHomeRun: " HDHOMERUN_IP
-        echo "${HDHOMERUN_IP}" > $HDHOMERUN_IP_PATH
+        rm ${HDHOMERUN_IP_PATH}
     elif (( USER_INPUT < LAST_CHANNEL_OPTION && USER_INPUT >= 0 )); then
         echo "Opening channel..."
         mpv http://${HDHOMERUN_IP}:${HDHOMERUN_PORT}/auto/v${CHANNEL_NUMBERS[$USER_INPUT - 1]} -fs --deinterlace
