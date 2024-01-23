@@ -15,7 +15,7 @@ fi
 
 while true; do
     # Clear screen, but preserve all text currently on it, unlike clear
-    # command normally does.
+    # command's normal behavior.
     # See: https://superuser.com/a/1667623
     height="$(tput lines 2>/dev/null)"
     if [ "$?" -eq 0 ]; then
