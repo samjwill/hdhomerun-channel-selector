@@ -38,7 +38,7 @@ while true; do
     fi
     echo "Using config located at ${MPV_CHANNEL_SELECTOR_CONFIG_DIR}"
 
-    # Get HDHomeRune IP address from user. Store it in a file for future use.
+    # Get HDHomeRun IP address from user. Store it in a file for future use.
     HDHOMERUN_IP_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/hdhomerun-ip"
     if [ ! -f "$HDHOMERUN_IP_PATH" ]; then
         read -p "Enter the IP address of the HDHomeRun: " USER_INPUT
