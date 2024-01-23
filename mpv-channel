@@ -32,12 +32,12 @@ while true; do
     fi
 
     # Determine config directory and ensure that it exists
-    MPV_CHANNEL_SELECTOR_CONFIG_DIR="$XDG_CONFIG_HOME/mpv-channel-selector"
-    mkdir -p "$MPV_CHANNEL_SELECTOR_CONFIG_DIR"
-    echo "Using config located at ${MPV_CHANNEL_SELECTOR_CONFIG_DIR}"
+    HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR="$XDG_CONFIG_HOME/hdhomerun-channel-selector"
+    mkdir -p "$HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR"
+    echo "Using config located at ${HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR}"
 
     # Get HDHomeRun IP address from user. Store it in a file for future use.
-    HDHOMERUN_IP_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/hdhomerun-ip"
+    HDHOMERUN_IP_PATH="$HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR/hdhomerun-ip"
     if [ ! -f "$HDHOMERUN_IP_PATH" ]; then
         read -p "Enter the IP address of the HDHomeRun: " USER_INPUT
         echo "${USER_INPUT}" > ${HDHOMERUN_IP_PATH}
@@ -49,7 +49,7 @@ while true; do
     echo "Using HDHomeRun IP/Port: ${HDHOMERUN_IP}:${HDHOMERUN_PORT}"
 
     # Ensure channel list file exists in config directory
-    CHANNEL_LIST_PATH="$MPV_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
+    CHANNEL_LIST_PATH="$HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
     if [ ! -f "$CHANNEL_LIST_PATH" ]; then
         touch "$CHANNEL_LIST_PATH"
     fi
@@ -117,10 +117,10 @@ while true; do
         # Sort the file alphabetically now that there's a new entry.
         sort -n -o ${CHANNEL_LIST_PATH} ${CHANNEL_LIST_PATH}
     elif [[ "$USER_INPUT" == "$REMOVE_CONFIGS_OPTION" ]]; then
-        echo "You are about to remove $MPV_CHANNEL_SELECTOR_CONFIG_DIR"
+        echo "You are about to remove $HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR"
         read -p "Do you want to proceed? (y/n): " RESPONSE
         if [[ "$RESPONSE" == "y" ]]; then
-            rm -r $MPV_CHANNEL_SELECTOR_CONFIG_DIR
+            rm -r $HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR
             echo "All configs have been removed!"
         else
             echo "Aborting..."
