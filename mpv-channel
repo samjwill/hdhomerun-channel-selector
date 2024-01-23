@@ -33,9 +33,7 @@ while true; do
 
     # Ensure config directory exists
     MPV_CHANNEL_SELECTOR_CONFIG_DIR="$XDG_CONFIG_HOME/mpv-channel-selector"
-    if [ ! -d "$DIRECTORY" ]; then
-        mkdir -p "$MPV_CHANNEL_SELECTOR_CONFIG_DIR"
-    fi
+    mkdir -p "$MPV_CHANNEL_SELECTOR_CONFIG_DIR"
     echo "Using config located at ${MPV_CHANNEL_SELECTOR_CONFIG_DIR}"
 
     # Get HDHomeRun IP address from user. Store it in a file for future use.
