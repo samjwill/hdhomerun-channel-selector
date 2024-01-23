@@ -93,7 +93,7 @@ while true; do
     # Handle user selection
     if [[ "$USER_INPUT" == "$ADD_CHANNEL_OPTION" ]]; then
         echo "Available channels are:"
-        curl --silent http://${HDHOMERUN_IP}/lineup.json | grep -o '"GuideNumber":"[^"]*"' | cut -d ":" -f2 | sed 's/\"//g' | sed -z 's/\n/ /g'
+        curl --silent http://${HDHOMERUN_IP}/lineup.json | grep -o '"GuideNumber":"[^"]*"' | cut -d ":" -f2 | sed 's/\"//g' | sed -z 's/\n/, /g' | sed 's/, $//'
         echo ""
         read -p "Enter a channel number: " USER_CHANNEL_NUM
         read -p "Enter an alias for the channel: " USER_CHANNEL_ALIAS
