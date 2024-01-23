@@ -50,7 +50,7 @@ while true; do
     if [ $? -ne 0 ]; then
         read -p "Reset the IP? (y/n): " RESPONSE
         if [[ "$RESPONSE" == "y" ]]; then
-            rm -r $HDHOMERUN_IP_PATH
+            rm ${HDHOMERUN_IP_PATH}
         else
             exit
         fi
