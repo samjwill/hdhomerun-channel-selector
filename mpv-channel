@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Exit on error.
-set -e
-
 # Ensure dependencies are installed
 if ! command -v mpv > /dev/null 2>&1; then
     echo "mpv is not installed! Please install it to use this tool."
@@ -47,6 +44,20 @@ while true; do
     read -r HDHOMERUN_IP < "$HDHOMERUN_IP_PATH"
     HDHOMERUN_PORT="5004"
     echo "Using HDHomeRun IP/Port: ${HDHOMERUN_IP}:${HDHOMERUN_PORT}"
+
+    echo -n "Ensuring HDHomeRun is reachable... "
+    curl -sSf "$HDHOMERUN_IP/discover.json" > /dev/null
+    if [ $? -ne 0 ]; then
+        read -p "Reset the IP? (y/n): " RESPONSE
+        if [[ "$RESPONSE" == "y" ]]; then
+            rm -r $HDHOMERUN_IP_PATH
+        else
+            exit
+        fi
+        continue
+    else
+        echo "Success!"
+    fi
 
     # Ensure channel list file exists in config directory
     CHANNEL_LIST_PATH="$HDHOMERUN_CHANNEL_SELECTOR_CONFIG_DIR/channel-list"
