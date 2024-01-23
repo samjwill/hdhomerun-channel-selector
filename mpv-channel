@@ -48,7 +48,7 @@ while true; do
     # Define an array to store the alias of each channel.
     CHANNEL_NAMES=()
 
-    # Define an array to store the command associated with opening each channel.
+    # Define an array to store the number of each aliased channel.
     CHANNEL_NUMBERS=()
 
     # Display all channel names.
