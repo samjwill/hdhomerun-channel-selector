@@ -147,7 +147,6 @@ while true; do
     elif (( USER_INPUT < LAST_CHANNEL_OPTION && USER_INPUT >= 0 )); then
         echo "Opening channel..."
         mpv http://${HDHOMERUN_IP}:${HDHOMERUN_PORT}/auto/v${CHANNEL_NUMBERS[$USER_INPUT - 1]} -fs --deinterlace
-        break
     else
         echo "Invalid selection!"
     fi
