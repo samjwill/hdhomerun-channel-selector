@@ -31,7 +31,7 @@ while true; do
         XDG_CONFIG_HOME="$HOME/.config"
     fi
 
-    # Ensure config directory exists
+    # Determine config directory and ensure that it exists
     MPV_CHANNEL_SELECTOR_CONFIG_DIR="$XDG_CONFIG_HOME/mpv-channel-selector"
     mkdir -p "$MPV_CHANNEL_SELECTOR_CONFIG_DIR"
     echo "Using config located at ${MPV_CHANNEL_SELECTOR_CONFIG_DIR}"
