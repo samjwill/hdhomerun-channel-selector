@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# Ensure mpv is installed
+# Ensure dependencies are installed
 if ! command -v mpv > /dev/null 2>&1; then
     echo "mpv is not installed! Please install it to use this tool."
     exit 1
 fi
-
 if ! command -v curl > /dev/null 2>&1; then
     echo "curl is not installed! Please install it to use this tool."
     exit 1
